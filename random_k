@@ -1,0 +1,30 @@
+#!/bin/bash
+
+func_exec()
+{
+	local j=
+	[ $n -lt $k ] && j=$n || j=$(echo $RANDOM%$n | bc)
+	[ $j -lt $k ] && ${l_c[j]}=$1 && echo Replacement
+	n=$[n+1]
+	echo $n
+}
+
+
+k=$1
+fd_root="$2"
+
+l_c=()
+
+n=0
+
+
+#find $fd_root -type d -name "DICOM" -exec func_exec {} \;
+#find $fd_root -type d -name "DICOM" | \
+while read fd_each
+do
+        [ $n -lt $k ] && j=$n || j=$(echo $RANDOM%$n | bc)
+        [ $j -lt $k ] && l_c[j]=$fd_each #&& echo Replacement at $n && echo "${l_c[@]}"
+        n=$[n+1]
+done < <(find $fd_root -type d -name "DICOM")
+printf '%d out of %d cases:\n' $k $n
+printf '%s\n' "${l_c[@]}"
