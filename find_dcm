@@ -1,0 +1,35 @@
+#!/bin/bash
+
+
+fd=$1
+fn=$2
+fv=$3
+
+
+for peer in $(ls $fd)
+do
+        for exam in $(ls $fd/$peer)
+        do
+                for series in $(ls $fd/$peer/$exam)
+                do
+                        fd_work=$fd/$peer/$exam/$series/DICOM
+                        tmp=$fd_work/$(ls $fd_work | head -1 2>/dev/null)
+
+                        if [ "x$fv" == "x" ]
+                        then
+                                echo $fd/$peer/$exam/$series
+                                dcmdump $tmp | grep -i $fn 2>/dev/null
+                        else
+                                out_tmp=$(dcmdump $tmp | grep -i $fn | grep -i $fv 2>/dev/null)
+                                if [ ! "x$out_tmp" == "x" ]
+                                then
+                                        echo $fd/$peer/$exam/$series
+                                        echo "$out_tmp"
+                                fi
+                        fi
+
+        		[ ! $tmp1 == "" ] && echo $1/$exam/$series && echo $tmp
+
+                done
+        done
+done
