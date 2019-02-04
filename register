@@ -1,0 +1,36 @@
+#!/bin/bash
+
+scan_ref=$1
+
+for i in $(ls . | sed -n "/^A.$/p")
+do
+        if [ ! "x${scan_ref}" == "x${i}" ]
+        then
+                echo "Regisering Scan" $i
+
+                echo "reg 1/5"
+                #flirt -in $i/iMag.nii.gz -ref $scan_ref/iMag.nii.gz -out $i/iMag_reg.nii.gz -dof 6 -searchrx -360 360 -searchry -360 360 -searchrz -360 360 -omat $i/rot.mat
+
+                echo "reg 2/5"
+                flirt -in $i/RDF.nii.gz -ref $scan_ref/RDF.nii.gz -applyxfm -init $i/rot.mat -out $i/RDF_reg.nii.gz
+                echo "reg 3/5"
+                flirt -in $i/N_std.nii.gz -ref $scan_ref/N_std.nii.gz -applyxfm -init $i/rot.mat -out $i/N_std_reg.nii.gz
+                echo "reg 4/5"
+                flirt -in $i/iMag.nii.gz -ref $scan_ref/iMag.nii.gz -applyxfm -init $i/rot.mat -out $i/iMag_reg.nii.gz
+                echo "reg 5/5"
+                flirt -in $i/iFreq.nii.gz -ref $scan_ref/iFreq.nii.gz -applyxfm -init $i/rot.mat -out $i/iFreq_reg.nii.gz
+                echo "reg 6/5"
+                flirt -in $i/Mask.nii.gz -ref $scan_ref/Mask.nii.gz -applyxfm -init $i/rot.mat -out $i/Mask_reg.nii.gz
+
+                echo "Registered Scan" $i
+        else
+                echo "Skipping Scan" $i
+
+                cp $i/RDF.nii.gz $i/RDF_reg.nii.gz
+                cp $i/N_std.nii.gz $i/N_std_reg.nii.gz
+                cp $i/iMag.nii.gz $i/iMag_reg.nii.gz
+                cp $i/iFreq.nii.gz $i/iFreq_reg.nii.gz
+                cp $i/Mask.nii.gz $i/Mask_reg.nii.gz
+        fi
+done
+
