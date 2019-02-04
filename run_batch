@@ -1,0 +1,54 @@
+#! /bin/bash
+
+
+me=$(readlink -f $0)
+if [ "x${me}" == "x" ]
+then
+  me=$0
+fi
+fd_base=$(dirname ${me})
+
+
+count_case()
+{
+	local fd_data=$2
+	local count=0
+	local scan=
+	local ex_no=
+	local se_no=
+	for scan in $(ls ${fd_data})
+	do
+		for ex_no in $(ls ${fd_data}/${scan})
+		do
+			for se_no in $(ls ${fd_data}/${scan}/${ex_no})
+			do
+				count=$[count+1]
+			done
+		done
+	done
+	eval ${1}=${count}
+	return 0
+}
+
+
+fd_data=${fd_base}/data
+# Count no. of case
+count_case n ${fd_data}
+i=0
+for scan in $(ls ${fd_data})
+do
+	for ex_no in $(ls ${fd_data}/${scan})
+	do
+		for se_no in $(ls ${fd_data}/${scan}/${ex_no})
+		do
+			cd ${fd_data}/${scan}/${ex_no}/${se_no}
+			
+			i=$[i+1]
+			echo "($i/$n)" ${scan}/${ex_no}/${se_no}
+
+			# Do something here
+
+		done
+	done
+done
+cd ${fd_base}
