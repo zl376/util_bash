@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+fd=$1
+sn=$2
+key='0008,103e'
+
+for eachfile in $(ls $fd);
+do
+#	echo $eachfile
+	dcmodify $fd/$eachfile -m "$key=$sn" -nb
+done
